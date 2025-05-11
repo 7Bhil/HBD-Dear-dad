@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Joyeux Anniversaire Papa 🎉</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(-45deg, #1e3c72, #2a5298, #1e3c72);
+      background-size: 600% 600%;
+      animation: gradientBG 20s ease infinite;
+      color: white;
+      overflow-x: hidden;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .container {
+      text-align: center;
+      padding: 50px 20px;
+    }
+    h1 {
+      font-size: 3rem;
+      animation: fadeIn 2s ease forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .letter {
+      max-width: 700px;
+      margin: 50px auto;
+      font-size: 1.3rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      backdrop-filter: blur(5px);
+      animation: slideIn 2s ease;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .wish {
+      font-size: 1.5rem;
+      margin: 30px 0;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    .wish.visible {
+      opacity: 1;
+    }
+    .fireworks {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="title">Joyeux Anniversaire Papa 🎉</h1>
+    <div class="letter">
+      <p id="letter-text"></p>
+    </div>
+    <div id="wishes"></div>
+    <h2 id="final-message" style="margin-top:50px; font-size:2rem; display:none">🎇 Joyeux anniversaire Papa ! Que cette journée soit magique 🎇</h2>
+  </div>
+  <div class="fireworks">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <script>
+    // Effet machine à écrire
+    const letterText = `Papa,\nAujourd’hui, c’est ton jour. Je n’ai ni fleurs ni photos à te montrer, mais j’ai des mots sincères à t’écrire.\nTu es un père exceptionnel, un homme fort, drôle, généreux. Merci d’être là, tout simplement.\nJe te souhaite un anniversaire rempli de paix, de joie, et d’amour.\nJe t’aime très fort.`;
+    const letterEl = document.getElementById('letter-text');
+    let i = 0;
+    function typeLetter() {
+      if (i < letterText.length) {
+        letterEl.innerHTML += letterText[i] === '\n' ? '<br>' : letterText[i];
+        i++;
+        setTimeout(typeLetter, 50);
+      }
+    }
+    typeLetter();
+
+    // Affichage progressif des souhaits
+    const wishes = [
+      "🎈 Tu es mon héros, Papa.",
+      "🎈 Chaque jour à tes côtés est une chance.",
+      "🎈 Je te souhaite le bonheur que tu mérites.",
+      "🎈 Que la vie t’apporte santé, paix et réussite.",
+      "🎈 Bon anniversaire de tout mon cœur."
+    ];
+    const wishesContainer = document.getElementById('wishes');
+    let index = 0;
+    function showNextWish() {
+      if (index < wishes.length) {
+        const el = document.createElement('div');
+        el.className = 'wish';
+        el.textContent = wishes[index];
+        wishesContainer.appendChild(el);
+        setTimeout(() => el.classList.add('visible'), 100);
+        index++;
+        setTimeout(showNextWish, 2500);
+      } else {
+        document.getElementById('final-message').style.display = 'block';
+      }
+    }
+    setTimeout(showNextWish, 4000);
+
+    // Feux d’artifice (simplifiés)
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    function Firework() {
+      this.x = Math.random() * canvas.width;
+      this.y = canvas.height;
+      this.radius = 2 + Math.random() * 3;
+      this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+      this.dy = -(2 + Math.random() * 4);
+    }
+    Firework.prototype.update = function() {
+      this.y += this.dy;
+      this.dy += 0.05; // gravity
+    };
+    Firework.prototype.draw = function() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+    };
+
+    let fireworks = [];
+    function animateFireworks() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (Math.random() < 0.2) fireworks.push(new Firework());
+      fireworks.forEach((f, i) => {
+        f.update();
+        f.draw();
+        if (f.y > canvas.height) fireworks.splice(i, 1);
+      });
+      requestAnimationFrame(animateFireworks);
+    }
+    animateFireworks();
+  </script>
+</body>
+</html>
